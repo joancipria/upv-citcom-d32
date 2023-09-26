@@ -8,19 +8,17 @@ def update_fillingLevel(level, date):
     url = "http://localhost:1026/ngsi-ld/v1/entities/urn:ngsi-ld:WasteContainer:001/attrs/fillingLevel"
 
     payload = json.dumps({
-    "value": {
-        "type": "Number",
-        "value": 30,
-        "unitCode": "P1"
-    }
+    "value": level,
+    "@context": "https://smartdatamodels.org/context.jsonld"
     })
+
     headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/ld+json',
     'NGSILD-Tenant': 'citcom'
     }
 
-    response = requests.request("PUT", url, headers=headers, data=payload)
-
+    response = requests.patch(url, headers=headers, data=payload)
+    print(level)
     print(response.text)
 
 
@@ -28,15 +26,17 @@ def fill_fake_data():
     initial_date=datetime.strptime("2021-12-31T12:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
 
     filling_level = 0
+
     for day in range(365):
+
         next_date = initial_date+timedelta(hours=24*(day+1))
+
         #print(x+1)
         #print(next_date.isoformat())
-        #update_fillingLevel(next_date.isoformat(),x)
-        
+        #update_fillingLevel(next_date.isoformat(),x)      
+
         if filling_level > randint(80,98):
             filling_level=randint(0,2)
-
         filling_level += randrange(6)
 
         #print(filling_level,next_date.isoformat())
